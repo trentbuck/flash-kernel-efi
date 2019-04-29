@@ -1,0 +1,17 @@
+#!/bin/bash
+set -eEu -o pipefail
+shopt -s failglob
+trap 'echo >&2 "${BASH_SOURCE:-$0}:${LINENO}: unknown error"' ERR
+
+
+## Do nothing if called by initramfs-tools in "when do I run you?" mode.
+## Probably moot because this script runs OUTSIDE the ramdisk, not inside it.
+case "${1:-}" in (prereqs) exit 0;; esac
+
+## FIXME: add tests here to make sure /boot/efi is the ESP and is mounted read-write.
+
+## UPDATE: this does not work because refind.conf defaults to only looking for linux kernels in ./ and ./boot/.
+##rsync -ai --exclude=efi /boot/ /boot/efi/"$HOSTNAME"/
+## Therefore fuck it, just put it in ./.
+## UPDATE: refind will ALSO look under ESP:\EFI\foo, so put them in there instead.
+rsync -ai --delete --exclude=efi /boot/ /boot/efi/EFI/debian/

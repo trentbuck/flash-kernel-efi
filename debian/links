@@ -1,0 +1,3 @@
+/usr/sbin/flash-kernel-efi  etc/kernel/postinst.d/zz-flash-kernel-efi
+/usr/sbin/flash-kernel-efi  etc/kernel/postrm.d/zz-flash-kernel-efi
+/usr/sbin/flash-kernel-efi  etc/initramfs/post-update.d/zz-flash-kernel-efi

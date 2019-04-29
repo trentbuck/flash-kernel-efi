@@ -1,0 +1,38 @@
+Source: flash-kernel-efi
+Section: utils
+Priority: optional
+Maintainer: Trent W. Buck <twb@cyber.com.au>
+Uploaders: Trent W. Buck <trentbuck@gmail.com>
+Build-Depends: debhelper (>= 12)
+Standards-Version: 4.3.0
+Rules-Requires-Root: no
+
+Package: flash-kernel-efi
+Architecture: all
+Depends: ${misc:Depends}, rsync, mount
+Description: utility to make UEFI servers bootable
+ ZFS prefers to manage whole disks, not partitions.
+ So you put a small USB key into the chassis to store the read-only refind-based ESP.
+ .
+ If you want / and /boot to be in the ZFS pool, you have another problem:
+ the UEFI ZFS driver (from GRUB 2.02 or efifs 1.3) doesn't support native ZFS
+ full-disk encryption.
+ .
+ rlaager suggests making a separate, GRUB-compatible "boot pool" just for /boot.
+ But that would require outside-of-ZFS partitioning, or dedicated disks for the boot pool.
+ .
+ Rather than that, take a lo-fi approach:
+  * leave /boot/ on the regular pool, and
+  * whenever /boot/ changes, COPY IT into the refind ESP.
+ .
+ This should Just Work provided:
+  * the ESP already contains refind;
+  * the ESP is large enough;
+  * the /boot/ already contains refind_linux.conf; and
+  * the ESP is already mounted on /boot/efi/.
+ .
+ This package does nothing except add the kernel and initramfs hooks to do the copy.
+ It uses rsync for the copy, to reduce the number of writes to the USB key.
+ (Since the USB key is a SPOF.  It has a huge number of erase cycles, but meh, rsync is easy.)
+ .
+ This package is inspired by flash-kernel, but shares no code with it.
